@@ -251,12 +251,13 @@ class Yolo_dataset(Dataset):
 
         self.cfg = cfg
         self.train = train
-
+        print(lable_path)
         truth = {}
         f = open(lable_path, 'r', encoding='utf-8')
         for line in f.readlines():
-            data = line.split(" ")
+            data = line.strip().split(" ")
             truth[data[0]] = []
+            # print(data)
             for i in data[1:]:
                 truth[data[0]].append([int(float(j)) for j in i.split(',')])
 
@@ -423,11 +424,11 @@ def get_image_id(filename:str) -> int:
     >>> no = f"{int(no):04d}"
     >>> return int(lv+no)
     """
-    raise NotImplementedError("Create your own 'get_image_id' function")
-    lv, no = os.path.splitext(os.path.basename(filename))[0].split("_")
-    lv = lv.replace("level", "")
+    # raise NotImplementedError("Create your own 'get_image_id' function")
+    print(filename)
+    no = filename.split(".")[0][88:]
     no = f"{int(no):04d}"
-    return int(lv+no)
+    return int(no)
 
 
 if __name__ == "__main__":

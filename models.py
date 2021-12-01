@@ -448,6 +448,25 @@ class Yolov4(nn.Module):
         output = self.head(x20, x13, x6)
         return output
 
+def boxes2output(boxes,picname):
+    id = picname.split(".")[0][87:]
+    with open("../shipDetection/submission/%s.txt"%id,"w") as f:
+      for i in range(len(boxes)):
+        box = boxes[i]
+        if(box[5]>=0.7):
+          x1 = int(box[0] * width)
+          y1 = int(box[1] * height)
+          x2 = int(box[2] * width)
+          y2 = int(box[3] * height)
+          p = box[5]
+          f.write("%d,%d,%d,%d,%s\n"%(x1,y1,x2,y2,str(p)))
+        if(i==0 and box[5]<0.7):
+          x1 = int(box[0] * width)
+          y1 = int(box[1] * height)
+          x2 = int(box[2] * width)
+          y2 = int(box[3] * height)
+          p = box[5]
+          f.write("%d,%d,%d,%d,%s\n"%(x1,y1,x2,y2,str(p)))
 
 if __name__ == "__main__":
     import sys
@@ -464,9 +483,9 @@ if __name__ == "__main__":
         n_classes = int(sys.argv[1])
         weightfile = sys.argv[2]
         imgfile = sys.argv[3]
-        height = sys.argv[4]
+        height = int(sys.argv[4])
         width = int(sys.argv[5])
-        namesfile = int(sys.argv[6])
+        namesfile = sys.argv[6]
     else:
         print('Usage: ')
         print('  python models.py num_classes weightfile imgfile namefile')
@@ -506,4 +525,5 @@ if __name__ == "__main__":
             print("please give namefile")
 
     class_names = load_class_names(namesfile)
+    boxes2output(boxes[0],imgfile)
     plot_boxes_cv2(img, boxes[0], 'predictions.jpg', class_names)
